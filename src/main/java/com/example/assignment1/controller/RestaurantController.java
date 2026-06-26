@@ -93,7 +93,7 @@ public class RestaurantController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable Long id) {
-        // TODO: Implement this method
-        return null;
+        restaurantService.deleteRestaurant(id);
+         return ResponseEntity.noContent().build();
     }
 }

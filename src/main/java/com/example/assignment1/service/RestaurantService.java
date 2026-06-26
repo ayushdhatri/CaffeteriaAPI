@@ -107,6 +107,7 @@ public class RestaurantService {
      *   2. Delete it from the repository using deleteById.
      */
     public void deleteRestaurant(Long id) {
-        // TODO: Implement this method
+        Restaurant toBeDeleteRestraunt = getRestaurantById(id);
+        restaurantRepository.deleteById(toBeDeleteRestraunt.getId());
     }
 }
