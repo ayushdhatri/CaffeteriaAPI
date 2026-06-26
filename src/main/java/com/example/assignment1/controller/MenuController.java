@@ -34,8 +34,8 @@ public class MenuController {
      */
     @PostMapping
     public ResponseEntity<MenuResponse> createMenu(@RequestBody MenuRequest request) {
-        // TODO: Implement this method
-        return null;
+        MenuResponse createdMenu = menuService.createMenu(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdMenu);
     }
 
     /**
@@ -46,8 +46,7 @@ public class MenuController {
      */
     @GetMapping
     public ResponseEntity<List<MenuResponse>> getAllMenus() {
-        // TODO: Implement this method
-        return null;
+        return ResponseEntity.ok(menuService.getAllMenus());
     }
 
     /**
@@ -58,8 +57,7 @@ public class MenuController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<MenuResponse> getMenuById(@PathVariable Long id) {
-        // TODO: Implement this method
-        return null;
+        return ResponseEntity.ok(menuService.getMenuById(id));
     }
 
     /**
@@ -70,8 +68,7 @@ public class MenuController {
      */
     @GetMapping("/restaurant/{restaurantId}")
     public ResponseEntity<List<MenuResponse>> getMenusByRestaurant(@PathVariable Long restaurantId) {
-        // TODO: Implement this method
-        return null;
+        return ResponseEntity.ok(menuService.getMenusByRestaurantId(restaurantId));
     }
 
     /**
@@ -86,8 +83,7 @@ public class MenuController {
     @GetMapping("/date/{date}")
     public ResponseEntity<List<MenuResponse>> getMenusByDate(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        // TODO: Implement this method
-        return null;
+        return ResponseEntity.ok(menuService.getMenusByDate(date));
     }
 
     /**
@@ -101,8 +97,7 @@ public class MenuController {
     public ResponseEntity<List<MenuResponse>> getMenusByRestaurantAndDate(
             @PathVariable Long restaurantId,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        // TODO: Implement this method
-        return null;
+        return ResponseEntity.ok(menuService.getMenusByRestaurantIdAndDate(restaurantId, date));
     }
 
     /**
@@ -114,8 +109,7 @@ public class MenuController {
     @PutMapping("/{id}")
     public ResponseEntity<MenuResponse> updateMenu(@PathVariable Long id,
                                                    @RequestBody MenuRequest request) {
-        // TODO: Implement this method
-        return null;
+        return ResponseEntity.ok(menuService.updateMenu(id, request));
     }
 
     /**
@@ -126,7 +120,7 @@ public class MenuController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
-        // TODO: Implement this method
-        return null;
+        menuService.deleteMenu(id);
+        return ResponseEntity.noContent().build();
     }
 }
