@@ -72,8 +72,7 @@ public class RestaurantService {
      * @return list of all restaurants (empty list if none exist)
      */
     public List<Restaurant> getAllRestaurants() {
-        // TODO: Implement this method
-        return null;
+        return restaurantRepository.findAll();
     }
 
     /**

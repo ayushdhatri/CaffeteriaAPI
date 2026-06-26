@@ -51,8 +51,7 @@ public class RestaurantController {
      */
     @GetMapping
     public ResponseEntity<List<Restaurant>> getAllRestaurants() {
-        // TODO: Implement this method
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(restaurantService.getAllRestaurants());
     }
 
     /**
