@@ -37,8 +37,24 @@ public class MenuItemService {
      *   5. Save using the repository and return the saved menu item.
      */
     public MenuItem createMenuItem(MenuItemRequest request) {
-        // TODO: Implement this method
-        return null;
+        if(request.getName() == null || request.getName().isEmpty()){
+            throw new InvalidRequestException("Menu item name cannot be empty");
+        }
+        if(request.getPrice() <= 0){
+            throw new InvalidRequestException("Menu item price must be greater than 0");
+        }
+        if(request.getCategory() == null){
+            throw new InvalidRequestException("Menu item category cannot be null");
+        }
+        MenuItem newMenuItem = new MenuItem();
+        newMenuItem.setName(request.getName());
+        newMenuItem.setPrice(request.getPrice());
+        newMenuItem.setDescription(request.getDescription());
+        newMenuItem.setVegetarian(request.isVegetarian());
+        newMenuItem.setCategory(request.getCategory());
+
+        menuItemRepository.save(newMenuItem);
+        return newMenuItem;
     }
 
     /**
@@ -50,8 +66,7 @@ public class MenuItemService {
      *   3. Return the found menu item.
      */
     public MenuItem getMenuItemById(Long id) {
-        // TODO: Implement this method
-        return null;
+        return menuItemRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Menu Item not found with id: " + id));
     }
 
     /**
@@ -60,8 +75,7 @@ public class MenuItemService {
      * @return list of all menu items (empty list if none exist)
      */
     public List<MenuItem> getAllMenuItems() {
-        // TODO: Implement this method
-        return null;
+        return menuItemRepository.findAll();
     }
 
     /**
@@ -78,8 +92,26 @@ public class MenuItemService {
      *   4. Save and return the updated menu item.
      */
     public MenuItem updateMenuItem(Long id, MenuItemRequest request) {
-        // TODO: Implement this method
-        return null;
+        MenuItem menuItem = getMenuItemById(id);
+        if(request.getName() == null || request.getName().isEmpty()){
+            throw new InvalidRequestException("Menu item name cannot be empty");
+        }
+        if(request.getPrice() <= 0){
+            throw new InvalidRequestException("Menu item price must be greater than 0");
+        }
+        if(request.getCategory() == null){
+            throw new InvalidRequestException("Menu item category cannot be null");
+        }
+        menuItem.setName(request.getName());
+        menuItem.setPrice(request.getPrice());
+        menuItem.setDescription(request.getDescription());
+        menuItem.setVegetarian(request.isVegetarian());
+        menuItem.setCategory(request.getCategory());
+
+        menuItemRepository.save(menuItem);
+        return menuItem;
+
+
     }
 
     /**
@@ -90,6 +122,7 @@ public class MenuItemService {
      *   2. Delete it from the repository using deleteById.
      */
     public void deleteMenuItem(Long id) {
-        // TODO: Implement this method
+        MenuItem menuItem = getMenuItemById(id);
+        menuItemRepository.deleteById(id);
     }
 }

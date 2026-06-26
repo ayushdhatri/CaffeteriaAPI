@@ -5,7 +5,7 @@ package com.example.assignment1.model;
 /**
  * Enum representing the category of a menu item.
  */
-public enum ItemCategory {
+public enum  ItemCategory {
     APPETIZER,
     MAIN_COURSE,
     DESSERT,
