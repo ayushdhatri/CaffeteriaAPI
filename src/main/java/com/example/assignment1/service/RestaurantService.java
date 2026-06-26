@@ -88,8 +88,15 @@ public class RestaurantService {
      *   5. Save and return the updated restaurant.
      */
     public Restaurant updateRestaurant(Long id, RestaurantRequest request) {
-        // TODO: Implement this method
-        return null;
+        Restaurant existingRestraunt = getRestaurantById(id);
+        if(request.getName() == null || request.getName().isEmpty()
+            || request.getLocation() == null || request.getLocation().isEmpty()){
+            throw new InvalidRequestException("Name and Location cannot be null or blank");
+        }
+        existingRestraunt.setName(request.getName());
+        existingRestraunt.setLocation(request.getLocation());
+        restaurantRepository.save(existingRestraunt);
+        return existingRestraunt;
     }
 
     /**

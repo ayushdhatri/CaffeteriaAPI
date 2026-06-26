@@ -79,8 +79,7 @@ public class RestaurantController {
     @PutMapping("/{id}")
     public ResponseEntity<Restaurant> updateRestaurant(@PathVariable Long id,
                                                        @RequestBody RestaurantRequest request) {
-        // TODO: Implement this method
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(restaurantService.updateRestaurant(id, request));
     }
 
     /**
