@@ -35,8 +35,20 @@ public class RestaurantService {
      *   4. Save it using the repository and return the saved restaurant.
      */
     public Restaurant createRestaurant(RestaurantRequest request) {
-        // TODO: Implement this method
-        return null;
+        // check if name and location should not be empty
+        if(request.getName() == null || request.getName().isEmpty()
+          || request.getLocation() == null || request.getLocation().isEmpty()) {
+            throw new ResourceNotFoundException("Name and Location cannot be null or blank");
+        }
+        // create object of restraunt
+        Restaurant newRestraunt = new Restaurant();
+        newRestraunt.setName(request.getName());
+        newRestraunt.setLocation(request.getLocation());
+
+        // save in the db(in-memory)
+        restaurantRepository.save(newRestraunt);
+
+        return newRestraunt;
     }
 
     /**

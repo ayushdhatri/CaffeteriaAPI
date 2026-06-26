@@ -36,8 +36,8 @@ public class RestaurantController {
      */
     @PostMapping
     public ResponseEntity<Restaurant> createRestaurant(@RequestBody RestaurantRequest request) {
-        // TODO: Implement this method
-        return null;
+        Restaurant newRestraunt = restaurantService.createRestaurant(request);
+        return ResponseEntity.status(HttpStatus.OK).body(newRestraunt);
     }
 
     /**
