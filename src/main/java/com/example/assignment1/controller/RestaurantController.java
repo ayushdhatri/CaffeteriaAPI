@@ -66,8 +66,7 @@ public class RestaurantController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> getRestaurantById(@PathVariable Long id) {
-        // TODO: Implement this method
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(restaurantService.getRestaurantById(id));
     }
 
     /**

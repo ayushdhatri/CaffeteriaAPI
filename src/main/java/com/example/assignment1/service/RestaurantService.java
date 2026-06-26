@@ -13,6 +13,7 @@ import com.example.assignment1.repository.RestaurantRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RestaurantService {
@@ -62,8 +63,7 @@ public class RestaurantService {
      * Hint: Optional has an .orElseThrow() method that is very useful here.
      */
     public Restaurant getRestaurantById(Long id) {
-        // TODO: Implement this method
-        return null;
+        return restaurantRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Restaurant not found with id: " + id));
     }
 
     /**
