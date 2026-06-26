@@ -37,9 +37,11 @@ public class RestaurantService {
      */
     public Restaurant createRestaurant(RestaurantRequest request) {
         // check if name and location should not be empty
-        if(request.getName() == null || request.getName().isEmpty()
-          || request.getLocation() == null || request.getLocation().isEmpty()) {
-            throw new ResourceNotFoundException("Name and Location cannot be null or blank");
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new InvalidRequestException("Restaurant name cannot be empty");
+        }
+        if (request.getLocation() == null || request.getLocation().trim().isEmpty()) {
+            throw new InvalidRequestException("Restaurant location cannot be empty");
         }
         // create object of restraunt
         Restaurant newRestraunt = new Restaurant();

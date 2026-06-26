@@ -66,19 +66,27 @@ public class MenuService {
      *  10. Convert the saved menu to a MenuResponse using the toMenuResponse() helper and return it.
      */
     public MenuResponse createMenu(MenuRequest request) {
-         if(restaurantRepository.findById(request.getRestaurantId()).isEmpty()){
-             throw new InvalidRequestException("Restaurant ID cannot be null");
-         }
-         if(request.getDate() == null){
-             throw new InvalidRequestException("Menu date cannot be null");
-         }
-         if(request.getMealType() == null){
-             throw new InvalidRequestException("Meal type cannot be null");
-         }
-         if(request.getMenuItemIds().isEmpty()){
-             throw new InvalidRequestException("Menu must contain at least one item");
-         }
-        // Step 7: Check for duplicate (Throw exception if it DOES exist)
+        // 1. Strict Request Validation (Blocks bad data from polluting the DB)
+        if (request.getRestaurantId() == null) {
+            throw new InvalidRequestException("Restaurant ID cannot be null");
+        }
+        if (request.getDate() == null) {
+            throw new InvalidRequestException("Menu date cannot be null");
+        }
+        if (request.getMealType() == null) {
+            throw new InvalidRequestException("Meal type cannot be null");
+        }
+        if (request.getMenuItemIds() == null || request.getMenuItemIds().isEmpty()) {
+            throw new InvalidRequestException("Menu must contain at least one item");
+        }
+
+        // 2. Verify restaurant exists (This correctly throws 404 Not Found)
+        restaurantService.getRestaurantById(request.getRestaurantId());
+
+        // 3. Verify all menu items exist
+        request.getMenuItemIds().forEach(menuItemService::getMenuItemById);
+
+        // 4. Duplicate Check
         Optional<Menu> duplicateCheck = menuRepository.findByRestaurantIdAndDateAndMealType(
                 request.getRestaurantId(), request.getDate(), request.getMealType());
 
@@ -86,16 +94,16 @@ public class MenuService {
             throw new DuplicateResourceException("Menu already exists for restaurant " +
                     request.getRestaurantId() + " on " + request.getDate() + " for " + request.getMealType());
         }
+
+        // 5. Save and Return
         Menu newMenu = new Menu();
         newMenu.setRestaurantId(request.getRestaurantId());
         newMenu.setDate(request.getDate());
         newMenu.setMealType(request.getMealType());
         newMenu.setMenuItemIds(request.getMenuItemIds());
-        menuRepository.save(newMenu);
 
-        return toMenuResponse(newMenu);
+        return toMenuResponse(menuRepository.save(newMenu));
     }
-
     /**
      * TODO: Get a menu by its ID, returned as a MenuResponse.
      *
@@ -179,50 +187,44 @@ public class MenuService {
      *   7. Save and convert to MenuResponse.
      */
     public MenuResponse updateMenu(Long id, MenuRequest request) {
-        // Step 1: Find the existing menu by ID
+        // 1. Find existing
         Menu existingMenu = menuRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Menu not found with ID: " + id));
 
-        // Step 2: Validate the request fields (Basic null checks; can be removed if using @Valid)
-        if (request.getRestaurantId() == null || request.getDate() == null ||
-                request.getMealType() == null || request.getMenuItemIds() == null) {
-            throw new IllegalArgumentException("Missing required fields in MenuRequest.");
+        // 2. Strict Request Validation
+        if (request.getRestaurantId() == null) {
+            throw new InvalidRequestException("Restaurant ID cannot be null");
+        }
+        if (request.getDate() == null) {
+            throw new InvalidRequestException("Menu date cannot be null");
+        }
+        if (request.getMealType() == null) {
+            throw new InvalidRequestException("Meal type cannot be null");
+        }
+        if (request.getMenuItemIds() == null || request.getMenuItemIds().isEmpty()) {
+            throw new InvalidRequestException("Menu must contain at least one item");
         }
 
-        // Step 3: Verify the restaurant exists
-        Restaurant restaurant = restaurantRepository.findById(request.getRestaurantId())
-                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found with ID: " + request.getRestaurantId()));
+        // 3. Verify references
+        restaurantService.getRestaurantById(request.getRestaurantId());
+        request.getMenuItemIds().forEach(menuItemService::getMenuItemById);
 
-        // Step 4: Verify all menu item IDs exist
-        // Assuming menuItemService has a method to fetch a list of valid items,
-        // or you can map through them individually.
-        List<MenuItem> menuItems = request.getMenuItemIds().stream()
-                .map(menuItemService::getMenuItemById // Adjust based on your MenuItemService signature
-                        )
-                .collect(Collectors.toList());
-
-        // Step 5: Check for duplicates
+        // 4. Duplicate Check
         Optional<Menu> duplicateCheck = menuRepository.findByRestaurantIdAndDateAndMealType(
                 request.getRestaurantId(), request.getDate(), request.getMealType());
 
-        // If a menu exists for this combination AND its ID doesn't match the one we are updating, it's a conflict
         if (duplicateCheck.isPresent() && !duplicateCheck.get().getId().equals(id)) {
-            throw new DuplicateResourceException(
-                    "A different menu already exists for this restaurant, date, and meal type combination.");
+            throw new DuplicateResourceException("Duplicate menu conflict.");
         }
 
-        // Step 6: Update the existing menu's fields
-        existingMenu.setRestaurantId(request.getRestaurantId()); // Or setRestaurantId(request.getRestaurantId()) depending on mapping
+        // 5. Update and Save
+        existingMenu.setRestaurantId(request.getRestaurantId());
         existingMenu.setDate(request.getDate());
         existingMenu.setMealType(request.getMealType());
-        existingMenu.setMenuItemIds(request.getMenuItemIds());   // Or setMenuItemIds(...) depending on mapping
+        existingMenu.setMenuItemIds(request.getMenuItemIds());
 
-        // Step 7: Save and convert to MenuResponse
-        Menu savedMenu = menuRepository.save(existingMenu);
-
-        return toMenuResponse(savedMenu);
+        return toMenuResponse(menuRepository.save(existingMenu));
     }
-
     /**
      * TODO: Delete a menu by ID.
      *
