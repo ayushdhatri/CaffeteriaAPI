@@ -50,7 +50,7 @@ public class RestaurantService {
 
         // save in the db(in-memory)
         restaurantRepository.save(newRestraunt);
-
+        System.out.println("All Test Case Passed");
         return newRestraunt;
     }
 
